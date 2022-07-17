@@ -64,10 +64,25 @@ class OfficeEquipmenWarehouse:
             if choose2 == 'ксерокс':
                 name_exm = '1'
                 name_exm += name_exm
+                state = input('является ли ксерокс старым(да/нет): ')
+                if state == 'да':
+                    state = True
+                else:
+                    state = False
+                state2 = input('является ли ксерокс новым(да/нет): ')
+                if state2 == 'да':
+                    state2 = True
+                else:
+                    state2 = False
+                state3 = input('требуется ремонт ?(да/нет): ')
+                if state3 == 'да':
+                    state3 = True
+                else:
+                    state3 = False
                 cop = input('(ксерокс)введите тип: ')
                 cop2 = input('(ксерокс)введите название: ')
                 cop3 = input('(ксерокс)введите колличество ')
-                name_exm = Copier(False, True, False, cop, cop2, int(cop3))
+                name_exm = Copier(state, state2, state3, cop, cop2, int(cop3))
                 if name_exm.is_old:
                     res['старая оргтехника'].setdefault(name_exm.name, []).append(name_exm.description_copier())
                     res['старая оргтехника'][name_exm.name].append(name_exm.count)
@@ -108,10 +123,25 @@ class OfficeEquipmenWarehouse:
             elif choose2 == 'принтер':
                 name_exm = '2'
                 name_exm += name_exm
+                state_printer = input('является ли принтер старым(да/нет): ')
+                if state_printer == 'да':
+                    state_printer = True
+                else:
+                    state_printer = False
+                state_printer2 = input('является ли принтер новым(да/нет): ')
+                if state_printer2 == 'да':
+                    state_printer2 = True
+                else:
+                    state_printer2 = False
+                state_printer3 = input('требуется ремонт ?(да/нет): ')
+                if state_printer3 == 'да':
+                    state_printer3 = True
+                else:
+                    state_printer3 = False
                 pr = input('(принтер)введите тип: ')
                 pr2 = input('(принтер)введите название: ')
                 pr3 = input('(принтер)введите колличество ')
-                name_exm = Printer(False, True, False, pr, pr2, int(pr3))
+                name_exm = Printer(state_printer, state_printer2, state_printer3, pr, pr2, int(pr3))
                 if name_exm.is_old:
                     res['старая оргтехника'].setdefault(name_exm.name, []).append(name_exm.description_printer())
                     res['старая оргтехника'][name_exm.name].append(name_exm.count)
@@ -152,17 +182,32 @@ class OfficeEquipmenWarehouse:
             elif choose2 == 'сканер':
                 name_exm = '3'
                 name_exm += name_exm
+                state_scanner = input('является ли принтер старым(да/нет): ')
+                if state_scanner == 'да':
+                    state_scanner = True
+                else:
+                    state_scanner = False
+                state_scanner2 = input('является ли принтер новым(да/нет): ')
+                if state_scanner2 == 'да':
+                    state_scanner2 = True
+                else:
+                    state_scanner2 = False
+                state_scanner3 = input('требуется ремонт ?(да/нет): ')
+                if state_scanner3 == 'да':
+                    state_scanner3 = True
+                else:
+                    state_scanner3 = False
                 scan = input('(сканер)введите тип: ')
                 scan2 = input('(сканер)введите название: ')
                 scan3 = input('(сканер)введите колличество ')
-                name_exm = Scanner(False, False, True, scan, scan2, int(scan3))
+                name_exm = Scanner(state_scanner, state_scanner2, state_scanner3, scan, scan2, int(scan3))
                 if name_exm.is_old:
                     res['старая оргтехника'].setdefault(name_exm.name, []).append(name_exm.description_scanner())
                     res['старая оргтехника'][name_exm.name].append(name_exm.count)
                     with open(FILENAME, 'r+', encoding='utf-8') as file:
                         try:
                             data = json.load(file)
-                            data['требуется ремонт'][name_exm.name] = [name_exm.description_scanner(), name_exm.count]
+                            data['старая оргтехника'][name_exm.name] = [name_exm.description_scanner(), name_exm.count]
                             print(data)
                             with open(FILENAME, 'r+', encoding='utf-8') as file:
                                 json.dump(data, file, ensure_ascii=False, indent=4)
@@ -174,7 +219,7 @@ class OfficeEquipmenWarehouse:
                     with open(FILENAME, 'r+', encoding='utf-8') as file:
                         try:
                             data = json.load(file)
-                            data['требуется ремонт'][name_exm.name] = [name_exm.description_scanner(), name_exm.count]
+                            data['новая оргтехника'][name_exm.name] = [name_exm.description_scanner(), name_exm.count]
                             print(data)
                             with open(FILENAME, 'r+', encoding='utf-8') as file:
                                 json.dump(data, file, ensure_ascii=False, indent=4)
@@ -198,21 +243,22 @@ class OfficeEquipmenWarehouse:
             if choose == 'списать':
                 try:
                     take_count = input('введите количество которое хотите списать: ')
+                    state_officeequipment = input('выбирите ветку хранения оргтехники: ')
                     name_officeequipmen = input('введите название оргтехники: ')
                     with open(FILENAME, 'r', encoding='utf-8') as f:
                         data = json.load(f)
-                        count_officeequipmen = data['старая оргтехника'][name_officeequipmen][1]
+                        count_officeequipmen = data[state_officeequipment][name_officeequipmen][1]
                         new_values = int(count_officeequipmen) - int(take_count)
                         if int(take_count) > count_officeequipmen:
                             raise SubErr(take_count, count_officeequipmen)
                         elif new_values == 0:
-                            del data['старая оргтехника'][name_officeequipmen]
+                            del data[state_officeequipment][name_officeequipmen]
                             with open(FILENAME, 'w+', encoding='utf-8') as f:
                                 json.dump(data, f, ensure_ascii=False, indent=4)
                                 print(data)
                         else:
-                            data['старая оргтехника'][name_officeequipmen] = [
-                                data['старая оргтехника'][name_officeequipmen][0], new_values]
+                            data[state_officeequipment][name_officeequipmen] = [
+                                data[state_officeequipment][name_officeequipmen][0], new_values]
                             with open(FILENAME, 'w+', encoding='utf-8') as f:
                                 json.dump(data, f, ensure_ascii=False, indent=4)
                                 print(data)
